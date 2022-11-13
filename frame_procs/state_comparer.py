@@ -18,6 +18,15 @@ parking_mask = cv2.imread(MASK_URI)
 
 def is_relevant(frame):
     # perform instance segmentation
+
+    # redundant temp image
+    with TempImage(frame) as temp_image:
+        exec("python vehicle_seg.py " + temp_image.name)
+
+        with read("output.jpg") as sse_image:
+            cv2.bitwise_xor(sse_image, frame)
+
+
     instances = frame
 
     # calculate current state
