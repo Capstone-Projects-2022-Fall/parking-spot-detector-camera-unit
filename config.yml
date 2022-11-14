@@ -1,5 +1,6 @@
-server_address: http://parkingspotdetector-env.eba-mmwgffbe.us-east-1.elasticbeanstalk.com/login
-camera_id: 73892039
+# server_address: http://parkingspotdetector-env.eba-mmwgffbe.us-east-1.elasticbeanstalk.com/
+server_address: http://192.168.1.156:3000
+camera_id: 635efd843379d80543dae0ca
 mask_uri: ./res/mask.png
 vector_uri: ./res/vectors.png
 test_input_frame: ./res/test.jpg

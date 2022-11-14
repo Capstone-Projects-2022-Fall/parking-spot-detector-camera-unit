@@ -43,7 +43,7 @@ def is_relevant(frame, proc_info={}):
     # calculate current state
     # mask against parking spaces
 
-    cv2.imwrite("instance.jpg", instances)
+    cv2.imwrite("instance.png", instances)
 
     # might want to XOR against open spots again to invert colors
 
@@ -51,7 +51,7 @@ def is_relevant(frame, proc_info={}):
     open_parking_spots = cv2.bitwise_not(open_parking_spots)
     open_parking_spots = cv2.bitwise_and(open_parking_spots, parking_mask)
 
-    cv2.imwrite("./test.jpg", open_parking_spots)
+    cv2.imwrite("./test.png", open_parking_spots)
 
     # calculate state
 
@@ -101,13 +101,18 @@ def is_relevant(frame, proc_info={}):
     return True
 
 
+"""
 INPUT_FRAME_URI=get_config()["test_input_frame"]
 test_image = cv2.imread(INPUT_FRAME_URI)
 test = {}
 is_relevant(test_image, proc_info=test)
 print(test)
 
-from utils.server_api import send_frame
+from utils.server_api import send_frame, update_camera_state, send_annotated_frame
 
 with open(INPUT_FRAME_URI, "rb") as file:
-    send_frame(file, test)
+    send_frame(file)
+    update_camera_state(test)
+    with open("./test.png", "rb") as result:
+      send_annotated_frame(result)
+"""

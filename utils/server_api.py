@@ -1,3 +1,4 @@
+import json
 import os
 import requests
 from requests import Request
@@ -14,17 +15,29 @@ def send_frame(frame_file, frame_data={}):
     PATH="/frames"
     URL = urljoin(DOMAIN, PATH)
     params = {"camera_id": CAMERA_ID}
-    json = {"datetime": "sample", "bytes": 1999, "camera_id": CAMERA_ID, **frame_data}
+    data = {"datetime": "sample", "bytes": 1999, "camera_id": CAMERA_ID}
     files = {"frame": frame_file}
 
-    res = requests.post(URL, params=params, files=files, json=json)
+    res = requests.post(URL, params=params, files=files)
 
     print(res.ok)
+
+def update_camera_state(frame_data={}):
+    print("updating camera state ")
+    METHOD="PATCH"
+    PATH="/cameras/" + CAMERA_ID
+    URL = urljoin(DOMAIN, PATH)
+    data = frame_data
+
+    res = requests.patch(URL, json=data)
+
+    print(res.ok)
+
 
 def send_annotated_frame(frame_file):
     print("sending frame " + frame_file.name)
     METHOD="POST"
-    PATH="/annotated/" + CAMERA_ID
+    PATH="/cameras/" + CAMERA_ID + "/annotated"
     URL = urljoin(DOMAIN, PATH)
     files = {"frame": frame_file}
 

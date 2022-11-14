@@ -5,8 +5,6 @@ from utils.frame_consumer import frame_consumer
 from utils.latest_frame import LatestFrame
 from utils.get_config import get_config
 
-exit(0)
-
 # config camera unit properties
 
 NUM_FRAME_CONSUMER=get_config()["num_consumer_threads"]
