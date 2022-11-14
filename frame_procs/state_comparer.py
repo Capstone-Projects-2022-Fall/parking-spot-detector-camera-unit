@@ -1,7 +1,10 @@
+import copy
 import cv2
 import hashlib
 import os
 from utils.create_temp_image import TempImage
+from utils.get_config import get_config
+from utils.find_open_segments import find_open_segments, find_mid_points_and_size
 
 BUFF_SIZE = 65536
 
@@ -9,15 +12,18 @@ BUFF_SIZE = 65536
 last_hash = ""
 
 # mask uri
-MASK_URI = "./res/mask.jpg"
+MASK_URI = get_config()["mask_uri"]
+VECTOR_URI = get_config()["vector_uri"]
 
 # instantiate the mask
-parking_mask = cv2.bitwise_not(cv2.imread(MASK_URI))
+parking_mask = cv2.imread(MASK_URI)
 
 # function describes whether or not we
 # should continue processing of this frame
 
-def is_relevant(frame):
+def is_relevant(frame, proc_info={}):
+    global last_hash
+
     # perform instance segmentation
 
     # redundant temp image
@@ -44,8 +50,7 @@ def is_relevant(frame):
     open_parking_spots = cv2.bitwise_and(parking_mask, instances)
     open_parking_spots = cv2.bitwise_not(open_parking_spots)
     open_parking_spots = cv2.bitwise_and(open_parking_spots, parking_mask)
-    #open_parking_spots = cv2.bitwise_not(open_parking_spots)
-    #open_parking_spots = cv2.bitwise_and(parking_mask, instances)
+
     cv2.imwrite("./test.jpg", open_parking_spots)
 
     # calculate state
@@ -84,7 +89,25 @@ def is_relevant(frame):
 
     last_hash = curr_hash
 
+    # calculate distances
+    spot_vector = cv2.imread(VECTOR_URI)
+
+    segments = find_open_segments(open_parking_spots, spot_vector)
+    spot_sizes = find_mid_points_and_size(segments)
+
+
+    proc_info.update(segments=segments, spot_sizes=spot_sizes)
+
     return True
 
-# test_image = cv2.imread("serc.jpg")
-# is_relevant(test_image)
+
+INPUT_FRAME_URI=get_config()["test_input_frame"]
+test_image = cv2.imread(INPUT_FRAME_URI)
+test = {}
+is_relevant(test_image, proc_info=test)
+print(test)
+
+from utils.server_api import send_frame
+
+with open(INPUT_FRAME_URI, "rb") as file:
+    send_frame(file, test)

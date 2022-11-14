@@ -7,5 +7,6 @@ def frame_consumer(latest_frame):
         print("ready to recieve frame")
         frame = latest_frame.recieve_frame()
         with TempImage(frame) as temp_image_file:
-            if(state_comparer.is_relevant(frame)):
-                send_frame(temp_image_file, frame)
+            proc_info = {}
+            if(state_comparer.is_relevant(frame, proc_info=proc_info)):
+                send_frame(temp_image_file, frame_data=proc_info)

@@ -2,21 +2,22 @@ import os
 import requests
 from requests import Request
 from requests.compat import urljoin
+from utils.get_config import get_config
 
-DOMAIN=os.environ.get('DOMAIN_NAME')
-CAMERA_ID=os.environ.get('CAMERA_ID')
+DOMAIN=get_config()["server_address"]
+CAMERA_ID=get_config()["camera_id"]
 
 # sends a temporary frame file
-def send_frame(frame_file, frame_data):
+def send_frame(frame_file, frame_data={}):
     print("sending frame " + frame_file.name)
     METHOD="POST"
     PATH="/frames"
     URL = urljoin(DOMAIN, PATH)
     params = {"camera_id": CAMERA_ID}
-    data = {"datetime": "sample", "bytes": 1999, "camera_id": CAMERA_ID} | frame_data
+    json = {"datetime": "sample", "bytes": 1999, "camera_id": CAMERA_ID, **frame_data}
     files = {"frame": frame_file}
 
-    res = requests.post(URL, params=params, files=files, data=data)
+    res = requests.post(URL, params=params, files=files, json=json)
 
     print(res.ok)
 

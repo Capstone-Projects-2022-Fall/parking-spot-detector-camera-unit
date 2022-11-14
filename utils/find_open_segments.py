@@ -1,6 +1,9 @@
 import cv2
 import operator
 import math
+from utils.get_config import get_config
+
+MPP=get_config()["mpp"]
 
 def pixelset(open_spots_mask, coords):
     return (open_spots_mask[coords] == [255, 255, 255]).all()
@@ -78,7 +81,7 @@ def find_open_segments(open_spots_mask, spot_vector):
     return segments
 
 
-def find_mid_points_and_size(segments, mpp=1, px_threshold=0, meter_threshold=0):
+def find_mid_points_and_size(segments, mpp=MPP, px_threshold=0, meter_threshold=0):
     points_and_size = []
 
     for segment in segments:
@@ -99,11 +102,13 @@ def find_mid_points_and_size(segments, mpp=1, px_threshold=0, meter_threshold=0)
         point_and_size = (midpoint, m_size)
         points_and_size.append(point_and_size)
 
-        print(point_and_size)
+    return points_and_size
 
 
+"""
 test_mask = cv2.imread("test.png")
 test_vectors = cv2.imread("vectors.png")
 print(test_mask.size)
 segments = find_open_segments(test_mask, test_vectors)
 find_mid_points_and_size(segments, mpp=2/70, meter_threshold=1)
+"""

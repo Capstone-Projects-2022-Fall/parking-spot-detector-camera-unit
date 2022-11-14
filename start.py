@@ -3,10 +3,13 @@ from utils.read_from_camera import connect_camera
 # from res.frame_matcher import connect_camera
 from utils.frame_consumer import frame_consumer
 from utils.latest_frame import LatestFrame
+from utils.get_config import get_config
+
+exit(0)
 
 # config camera unit properties
 
-NUM_FRAME_CONSUMER=1
+NUM_FRAME_CONSUMER=get_config()["num_consumer_threads"]
 
 # create global vars
 
