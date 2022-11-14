@@ -22,6 +22,7 @@ for i in range(NUM_FRAME_CONSUMER):
     worker_threads.append(new_thread)
     new_thread.start()
 
+# create and start configuration thread
 
 # connect to camera
 
