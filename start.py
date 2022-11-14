@@ -1,12 +1,12 @@
 from threading import Thread
-# from utils.read_from_camera import connect_camera
-from res.frame_matcher import connect_camera
+from utils.read_from_camera import connect_camera
+# from res.frame_matcher import connect_camera
 from utils.frame_consumer import frame_consumer
 from utils.latest_frame import LatestFrame
 
 # config camera unit properties
 
-NUM_FRAME_CONSUMER=3
+NUM_FRAME_CONSUMER=1
 
 # create global vars
 

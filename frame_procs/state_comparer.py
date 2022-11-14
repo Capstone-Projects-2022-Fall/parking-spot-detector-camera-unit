@@ -1,5 +1,6 @@
 import cv2
 import hashlib
+import os
 from utils.create_temp_image import TempImage
 
 BUFF_SIZE = 65536
@@ -11,7 +12,7 @@ last_hash = ""
 MASK_URI = "./res/mask.jpg"
 
 # instantiate the mask
-parking_mask = cv2.imread(MASK_URI)
+parking_mask = cv2.bitwise_not(cv2.imread(MASK_URI))
 
 # function describes whether or not we
 # should continue processing of this frame
@@ -20,20 +21,31 @@ def is_relevant(frame):
     # perform instance segmentation
 
     # redundant temp image
+
+    output_image = None
+
+    os.chdir("yolseg")
+
     with TempImage(frame) as temp_image:
-        exec("python vehicle_seg.py " + temp_image.name)
+        os.system("bin/Release/Yolact 0.3f " + temp_image.name)
+        output_image = cv2.imread("result.png")
 
-        with read("output.jpg") as sse_image:
-            cv2.bitwise_xor(sse_image, frame)
+    os.chdir("../")
 
-
-    instances = frame
+    instances = cv2.bitwise_not(output_image)
 
     # calculate current state
     # mask against parking spaces
 
+    cv2.imwrite("instance.jpg", instances)
+
     # might want to XOR against open spots again to invert colors
+
     open_parking_spots = cv2.bitwise_and(parking_mask, instances)
+    open_parking_spots = cv2.bitwise_not(open_parking_spots)
+    open_parking_spots = cv2.bitwise_and(open_parking_spots, parking_mask)
+    #open_parking_spots = cv2.bitwise_not(open_parking_spots)
+    #open_parking_spots = cv2.bitwise_and(parking_mask, instances)
     cv2.imwrite("./test.jpg", open_parking_spots)
 
     # calculate state
@@ -72,7 +84,7 @@ def is_relevant(frame):
 
     last_hash = curr_hash
 
-    return True;
+    return True
 
-test_image = cv2.imread("./res/img1.jpg")
-is_relevant(test_image)
+# test_image = cv2.imread("serc.jpg")
+# is_relevant(test_image)
